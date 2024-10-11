@@ -17,18 +17,28 @@ const AttributeSetup = () => {
   const [newAttribute, setNewAttribute] = useState({ name: "" });
   const [editingAttribute, setEditingAttribute] = useState(null);
 
+  // Retrieve the token from local storage
+  const token = localStorage.getItem("token");
+
+  // Set Axios headers with token
+  const axiosConfig = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
   // Fetch attributes data from API
   useEffect(() => {
     const fetchAttributes = async () => {
       try {
-        const response = await axios.get(`${ApiUrl}attributes/`);
+        const response = await axios.get(`${ApiUrl}attributes/`, axiosConfig);
         setAttributes(response.data.doc);
       } catch (error) {
         toast.error("Error fetching attributes data.");
       }
     };
     fetchAttributes();
-  }, []);
+  }, [axiosConfig]);
 
   // Handle tab click
   const handleTabClick = (lang) => setActiveTab(lang);
@@ -53,18 +63,19 @@ const AttributeSetup = () => {
         // Update attribute
         await axios.put(
           `${ApiUrl}attributes/${editingAttribute._id}`,
-          newAttribute
+          newAttribute,
+          axiosConfig
         );
         toast.success("Attribute updated successfully!");
       } else {
         // Add new attribute
-        await axios.post(`${ApiUrl}attributes/`, newAttribute);
+        await axios.post(`${ApiUrl}attributes/`, newAttribute, axiosConfig);
         toast.success("Attribute added successfully!");
       }
       // Reset form and refetch attributes
       setNewAttribute({ name: "" });
       setEditingAttribute(null);
-      const response = await axios.get(`${ApiUrl}attributes/`);
+      const response = await axios.get(`${ApiUrl}attributes/`, axiosConfig);
       setAttributes(response.data.doc);
     } catch (error) {
       toast.error("Error saving attribute.");
@@ -74,9 +85,9 @@ const AttributeSetup = () => {
   // Handle attribute deletion
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${ApiUrl}attributes/${id}`);
+      await axios.delete(`${ApiUrl}attributes/${id}`, axiosConfig);
       toast.success("Attribute deleted successfully!");
-      const response = await axios.get(`${ApiUrl}attributes/`);
+      const response = await axios.get(`${ApiUrl}attributes/`, axiosConfig);
       setAttributes(response.data.doc);
     } catch (error) {
       toast.error("Error deleting attribute.");

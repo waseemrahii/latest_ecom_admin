@@ -157,6 +157,7 @@ const CategoryForm = ({ selectedLang, newCategory, onInputChange, onFileChange, 
   );
 
   return (
+    <div className="card p-6">
     <form onSubmit={onSubmit}>
       <div className="row">
         <div className="col-lg-6">
@@ -254,7 +255,8 @@ const CategoryForm = ({ selectedLang, newCategory, onInputChange, onFileChange, 
         </div>
       </div>
     </form>
-  );
+    </div>
+      );
 };
 
 export default React.memo(CategoryForm);

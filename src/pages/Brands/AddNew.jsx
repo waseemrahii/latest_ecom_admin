@@ -210,7 +210,6 @@ const AddNewBrand = () => {
                   </div> 
                 </div>
 
-                <ProductImageWrapper  />
                 <div className="d-flex justify-content-end">
                   <button
                     type="reset"

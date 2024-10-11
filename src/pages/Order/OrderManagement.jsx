@@ -15,11 +15,6 @@ import {
   updateOrderStatus,
   deleteOrder,
 } from "../../components/redux/orderSlice";
-import {
-  fetchCategories,
-  fetchSubCategories,
-  fetchBrands,
-} from "../../components/redux/categorybrandSlice";
 import LoadingSpinner from "../../components/LoodingSpinner/LoadingSpinner";
 import ExportButton from "../../components/ActionButton/Export";
 import ActionButton from "../../components/ActionButton/Action";

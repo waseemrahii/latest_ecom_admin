@@ -12,6 +12,7 @@
 // import "react-toastify/dist/ReactToastify.css"; // Import CSS for toast notifications
 // import ExportButton from "../../components/ActionButton/Export";
 // import ActionButton from "../../components/ActionButton/Action";
+// import ApiUrl from "../../ApiUrl";
 
 // // toast.configure(); // Configure toast notifications
 
@@ -25,10 +26,10 @@
 //   useEffect(() => {
 //     const fetchNotifications = async () => {
 //       try {
-//         const response = await fetch("http://localhost:3000/api/notification/");
+//         const response = await fetch(`${ApiUrl}notification/`);
 //         if (!response.ok) throw new Error("Failed to fetch notifications");
 //         const data = await response.json();
-//         setNotifications(data);
+//         setNotifications(data.doc);
 //         setLoading(false);
 //       } catch (error) {
 //         console.error("Error fetching notifications:", error);
@@ -59,7 +60,7 @@
 //     formData.append("image", uploadedImage);
 
 //     try {
-//       const response = await fetch("http://localhost:3000/api/notification/", {
+//       const response = await fetch(`${ApiUrl}notification/`, {
 //         method: "POST",
 //         body: formData,
 //       });
@@ -81,7 +82,7 @@
 
 //     try {
 //       const response = await fetch(
-//         `http://localhost:3000/api/notification/${id}`,
+//         `${ApiUrl}/notification/${id}`,
 //         {
 //           method: "PUT",
 //           headers: { "Content-Type": "application/json" },
@@ -105,7 +106,7 @@
 //   const handleResend = async (id) => {
 //     try {
 //       const response = await fetch(
-//         `http://localhost:3000/api/notification/${id}/increment`,
+//         `${ApiUrl}notification/${id}/increment`,
 //         {
 //           method: "PUT",
 //         }
@@ -129,7 +130,7 @@
 //     if (window.confirm("Are you sure you want to delete this notification?")) {
 //       try {
 //         const response = await fetch(
-//           `http://localhost:3000/api/notification/${id}`,
+//           `${ApiUrl}notification/${id}`,
 //           {
 //             method: "DELETE",
 //           }
@@ -388,6 +389,9 @@
 // };
 
 // export default SendNotification;
+
+
+
 import React, { useState, useEffect } from "react";
 import {
   FaSearch,

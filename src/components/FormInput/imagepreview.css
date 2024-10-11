@@ -6,14 +6,7 @@
     font-style:normal;
     font-display:block;
   } 
-   
-  
- 
-  
-
-  
- 
-  .product-image-wrapper { 
+    .product-image-wrapper { 
       display: flex; 
       flex-wrap: wrap; 
       gap: 24px;
@@ -385,7 +378,7 @@
   .badge-soft-info  { 
       color: #1455ac; 
       border-radius: 5px; 
-      border: 1px solid rgba(20,85,172,.2); 
+      /* border: 1px solid rgba(20,85,172,.2);  */
       background: #e9f3ff;
   } 
   
@@ -628,7 +621,7 @@
   } 
   
   h3 { 
-      color: #1e2022;
+      /* color: #1e2022; */
   } 
   
   h3 { 
