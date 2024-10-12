@@ -31,9 +31,9 @@ const BusinessAnalytics = () => {
     walletAnalytics()
     },[])
     console.log(businessAnalytics ?  businessAnalytics:"")
-    if(loading) {
-      return  <LoadingSpinner/>
-    }
+    // if(loading) {
+    //   return  <LoadingSpinner/>
+    // }
   return (
     <div className="card-body snipcss-ti2xq">
       <div className="row flex-between align-items-center g-2 mb-3">

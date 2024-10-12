@@ -173,6 +173,7 @@ const CategoryList = React.memo(
         
           <TableList
             title="Categories"
+            imageSrc='/top-selling-product-icon.png'
             listData={categories}
             columns={columns}
             fetchListData={() => {}} // Provide your fetch function if needed

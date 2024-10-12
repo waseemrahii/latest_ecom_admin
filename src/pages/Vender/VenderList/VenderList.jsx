@@ -235,12 +235,19 @@ const VendorList = () => {
   //       <LoadingSpinner />
   //     </div>
   //   );
+  // else if (error)
+  //   return (
+  //     <div>
+  //       <h2>Error: {error}</h2>
+  //     </div>
+  //   );
+  
   return (
     <div className="content container-fluid">
       <div className="mb-4 p-4">
         <h2 className="h1 mb-2 text-capitalize d-flex align-items-center gap-2">
           <img src="/add-new-seller.png" alt="" />
-          Vendor List{" "}
+            Vendor List  
           <span className="badge badge-soft-dark radius-50 fz-16 text-capitalize">
             {vendors.length}
           </span>

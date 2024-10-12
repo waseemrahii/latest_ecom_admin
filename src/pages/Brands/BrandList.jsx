@@ -97,7 +97,9 @@ const BrandList = () => {
       <React.Suspense fallback={<div>Loading...</div>}>
         <LazyTableList
           title="Brand List"
+          tableTitle="Brand List"
           listData={brands}
+          imageSrc ="/top-selling-product-icon.png"
           fetchListData={() => dispatch(fetchBrands())}
           columns={columns}
           exportFileName="brandList"
