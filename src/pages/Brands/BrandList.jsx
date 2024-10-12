@@ -1,16 +1,22 @@
-import React, { useEffect, useCallback, lazy } from "react";
+import React, { useEffect, lazy } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchBrands, updateBrandStatus, deleteBrand } from "../../components/redux/brandSlice";
+import {
+  fetchBrands,
+  updateBrandStatus,
+  deleteBrand,
+} from "../../components/redux/brandSlice";
 import { FaEdit, FaTrash } from "react-icons/fa";
 // import TableList from "../../components/FormInput/TableList";
 import ActionButton from "../../components/ActionButton/Action";
-import Switcher from "../../components/FormInput/Switcher"; 
-import ConfirmationModal from "../../components/FormInput/ConfirmationModal"; 
+import Switcher from "../../components/FormInput/Switcher";
+import ConfirmationModal from "../../components/FormInput/ConfirmationModal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// Lazy load TableList for performance
-const LazyTableList = lazy(() => import("../../components/FormInput/TableList"));
+import LoadingSpinner from "../../components/LoodingSpinner/LoadingSpinner";
 
+const LazyTableList = lazy(() =>
+  import("../../components/FormInput/TableList")
+);
 
 const BrandList = () => {
   const dispatch = useDispatch();
@@ -93,11 +99,19 @@ const BrandList = () => {
   ];
 
   return (
-       <div>
-      <React.Suspense fallback={<div>Loading...</div>}>
+    <div className="">
+      <React.Suspense
+        fallback={
+          <div>
+            <LoadingSpinner />
+          </div>
+        }
+      >
         <LazyTableList
-          title="Brand List"
+          title="Brand"
+          tableTitle="Brand List"
           listData={brands}
+          imageSrc="https://vistamart.biz/public/assets/back-end/img/brand.png"
           fetchListData={() => dispatch(fetchBrands())}
           columns={columns}
           exportFileName="brandList"
@@ -106,6 +120,19 @@ const BrandList = () => {
       </React.Suspense>
       <ToastContainer />
     </div>
+    // <div className="">
+
+    //     <TableList
+    //       title="Brand List"
+    //       listData={brands}
+    //       fetchListData={() => dispatch(fetchBrands())}
+    //       columns={columns}
+    //       exportFileName="brandList"
+    //       searchPlaceholder="Search by Brand Name"
+    //     />
+
+    //   <ToastContainer />
+    // </div>
   );
 };
 

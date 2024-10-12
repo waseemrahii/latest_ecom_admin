@@ -1,25 +1,20 @@
 import React from "react";
 
-
-const ReusableTable = ({ 
-  title, 
-  columns, 
-  data, 
-  actions, 
-  searchComponent, 
-  exportComponent 
+const ReusableTable = ({
+  title,
+  columns,
+  data,
+  actions,
+  searchComponent,
+  exportComponent,
 }) => {
-   return (
-
+  return (
     <div className="card mt-4">
       <div className="px-3 py-4">
         <div className="flex justify-between items-start gap-2 flex-col md:flex-row">
           <div className="mb-3 mb-lg-0">
             <h5 className="form-label text-[1rem] font-semibold">
-              {title}
-              <span className="badge badge-soft-dark ml-2">
-                {data.length}
-              </span>
+              <span className="badge badge-soft-dark ml-2">{data.length}</span>
             </h5>
           </div>
           <div className="flex gap-2">
@@ -28,7 +23,7 @@ const ReusableTable = ({
           </div>
         </div>
       </div>
-      
+
       <div className="table-responsive">
         <table
           className="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
@@ -37,7 +32,7 @@ const ReusableTable = ({
           <thead className="thead-light">
             <tr>
               {columns.map((col, index) => (
-                <th key={index} className={col.className || ''}>
+                <th key={index} className={col.className || ""}>
                   {col.label}
                 </th>
               ))}
