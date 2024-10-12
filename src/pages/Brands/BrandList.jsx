@@ -108,10 +108,10 @@ const BrandList = () => {
         }
       >
         <LazyTableList
-          title="Brand"
+          title="Brand List"
           tableTitle="Brand List"
           listData={brands}
-          imageSrc="https://vistamart.biz/public/assets/back-end/img/brand.png"
+          imageSrc="/top-selling-product-icon.png"
           fetchListData={() => dispatch(fetchBrands())}
           columns={columns}
           exportFileName="brandList"
