@@ -72,7 +72,8 @@ const BannerSetup = () => {
         <img
           src={banner.bannerImage}
           alt={banner.name}
-          className="h-16 w-24 object-cover"
+          className="h-16 w-24 object-cover "
+          style={{margin:"0 auto"}}
         />
       ),
     },
@@ -106,8 +107,8 @@ const BannerSetup = () => {
   ];
 
   return (
-    <div className="bg-[#F9F9FB] px-5 py-5 w-full">
-      <div className="mt-8">
+    <div className="bg-[#F9F9FB] px-0 sm:px-6 md:px-8 lg:px-10 py-0 w-full">
+  <div className="mt-4 sm:mt-6 md:mt-8 lg:mt-10">
         <React.Suspense
           fallback={
             <div>

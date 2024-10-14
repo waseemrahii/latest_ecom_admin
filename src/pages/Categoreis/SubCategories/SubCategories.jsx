@@ -1,133 +1,138 @@
-// SubCategories.js
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect, useCallback, lazy, Suspense, memo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
-import ApiUrl from "../../../ApiUrl";
-import SubCategoryForm from "./SubCategoryForm";
-import SubCategoryList from "./SubCategoryList";
-import SearchBar from "./SearchBar";
-import LoadingSpinner from "../../../components/LoodingSpinner/LoadingSpinner";
+import {
+  fetchSubCategories,
+  createSubCategory,
+  deleteSubCategory,
+  updateSubCategory,
+} from "../../../components/redux/subCategorySlice";
+import { fetchCategories } from "../../../components/redux/categorySlice";
+import ConfirmationModal from "../../../components/FormInput/ConfirmationModal";
+
+// Lazy load components
+const SubCategoryForm = lazy(() => import("./SubCategoryForm"));
+const SubCategoryList = lazy(() => import("./SubCategoryList"));
 
 const SubCategoriess = () => {
-  const [subCategories, setSubCategories] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const dispatch = useDispatch();
+  const { subCategories, loading, error } = useSelector((state) => state.productSubcategory);
+  const { categories } = useSelector((state) => state.productCategory);
+
   const [formData, setFormData] = useState({
     name: "",
     mainCategory: "",
     priority: "",
   });
-  const [activeTab, setActiveTab] = useState("en");
+
+  const [editMode, setEditMode] = useState(false);
+  const formRef = React.useRef(); // Create a ref for the form section
 
   useEffect(() => {
-    axios
-      .get(`${ApiUrl}categories/`)
-      .then((response) => {
-        setCategories(response.data.doc);
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-      });
-
-    axios
-      .get(`${ApiUrl}sub-categories/`)
-      .then((response) => {
-        setSubCategories(response.data.doc);
-      })
-      .catch((error) => {
-        console.error("Error fetching sub-categories:", error);
-      });
+    loadData();
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios
-      .post(`${ApiUrl}sub-categories/`, formData)
-      .then((response) => {
-        setSubCategories([...subCategories, response.data.doc]);
-        setFormData({
-          name: "",
-          mainCategory: "",
-          priority: "",
-        });
-      })
-      .catch((error) => {
-        console.error("Error adding subcategory:", error);
-      });
-  };
+  const loadData = useCallback(async () => {
+    try {
+      await Promise.all([
+        dispatch(fetchSubCategories()).unwrap(),
+        dispatch(fetchCategories()).unwrap(),
+      ]);
+    } catch (error) {
+      Swal.fire("Error!", "Failed to load data", "error");
+    }
+  }, [dispatch]);
 
-  const handleDelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axios
-          .delete(`${ApiUrl}sub-categories/${id}`)
-          .then(() => {
-            setSubCategories(
-              subCategories.filter((subCategory) => subCategory._id !== id)
-            );
-            Swal.fire("Deleted!", "Sub-category has been deleted.", "success");
-          })
-          .catch((error) => {
-            console.error("Error deleting subcategory:", error);
-          });
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      try {
+        const { id, ...dataToSubmit } = formData; // Remove id if present
+        await dispatch(editMode ? updateSubCategory(dataToSubmit) : createSubCategory(dataToSubmit)).unwrap();
+        Swal.fire("Success!", `Sub-category ${editMode ? "updated" : "created"} successfully.`, "success");
+        resetForm();
+        await loadData();
+      } catch (error) {
+        console.error("Submit Error:", error);
+        Swal.fire("Error!", error.message || "Failed to process the request.", "error");
       }
-    });
-  };
+    },
+    [editMode, formData, dispatch, loadData]
+  );
 
-  const handleTabClick = (lang) => {
-    setActiveTab(lang);
-  };
+  const resetForm = useCallback(() => {
+    setFormData({ name: "", mainCategory: "", priority: "" });
+    setEditMode(false);
+  }, []);
+
+  const handleDelete = useCallback(async (id) => {
+    const confirmed = await ConfirmationModal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this sub-category!",
+      icon: "warning",
+      dangerMode: true,
+    });
+
+    if (confirmed) {
+      try {
+        await dispatch(deleteSubCategory(id)).unwrap();
+        Swal.fire("Deleted!", "Sub-category has been deleted.", "success");
+        await loadData();
+      } catch (error) {
+        Swal.fire("Error!", "Failed to delete the sub-category.", "error");
+      }
+    }
+  }, [dispatch]);
+
+  const handleEdit = useCallback((subCategory) => {
+    setFormData(subCategory);
+    setEditMode(true);
+    formRef.current.scrollIntoView({ behavior: "smooth", block: "start" }); // Scroll to the form
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  // if (loading)
-  //   return (
-  //     <div>
-  //       <LoadingSpinner />
-  //     </div>
-  //   );
-  // if (error) return <div>Error: {error}</div>;
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="content container-fluid">
+      <div className="font-bold pb-4 text-xl flex gap-2 items-start">
+        <h2 className="h1 mb-2 text-capitalize d-flex align-items-center gap-2">
+          <img src="/add-new-seller.png" alt="Table Heading Icon" className="w-8 h-8" />
+          <span className="form-label text-[1.5rem] font-semibold text-green-600">
+            Sub Categories
+          </span>
+        </h2>
+      </div>
       <div className="card">
-        <div className="card-body">
-          <h2 className="font-semibold text-[1rem]">Sub Categories</h2>
-          <SubCategoryForm
-            formData={formData}
-            categories={categories}
-            handleChange={handleChange}
-            handleSubmit={handleSubmit}
-            activeTab={activeTab}
-            handleTabClick={handleTabClick}
-          />
+        <div className="card-body" ref={formRef}> {/* Add ref to the card body */}
+          <Suspense fallback={<div>Loading Form...</div>}>
+            <MemoizedSubCategoryForm
+              formData={formData}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              categories={categories}
+            />
+          </Suspense>
         </div>
       </div>
-      <div className="card mt-4 p-4">
-        <div className="flex flex-col md:flex-row items-start gap-4 justify-between">
-          <h2 className="font-semibold text-[1rem]">Sub Categories</h2>
-          <div className="card-header">
-            <SearchBar />
-          </div>
-        </div>
 
-        <div className="card-body">
-          <SubCategoryList
-            subCategories={subCategories}
-            handleDelete={handleDelete}
-          />
-        </div>
-      </div>
+      <Suspense fallback={<div>Loading List...</div>}>
+        <MemoizedSubCategoryList
+          subCategories={subCategories}
+          handleDelete={handleDelete}
+          handleEdit={handleEdit}
+        />
+      </Suspense>
     </div>
   );
 };
+
+// Memoize the form and list to prevent unnecessary re-renders
+const MemoizedSubCategoryForm = memo(SubCategoryForm);
+const MemoizedSubCategoryList = memo(SubCategoryList);
 
 export default SubCategoriess;

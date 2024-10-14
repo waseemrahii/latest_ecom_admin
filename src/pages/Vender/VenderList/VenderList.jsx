@@ -243,40 +243,7 @@ const VendorList = () => {
   //   );
   
   return (
-    <div className="content container-fluid">
-      <div className="mb-4 p-4">
-        <h2 className="h1 mb-2 text-capitalize d-flex align-items-center gap-2">
-          <img src="/add-new-seller.png" alt="" />
-            Vendor List  
-          <span className="badge badge-soft-dark radius-50 fz-16 text-capitalize">
-            {vendors.length}
-          </span>
-        </h2>
-        <div className="card">
-          <div className="card-body">
-            <div className="d-flex flex-col sm:flex-row justify-between mb-3">
-              <Suspense fallback={<div>Loading Search...</div>}>
-                <VendorSearch />
-              </Suspense>
-              <div className="flex mt-2 items-center gap-4">
-                <Link
-                  to="/addvenderform"
-                  className="px-4 py-2 rounded-md bg-primary text-white hover:text-white hover:bg-primary-dark flex items-center gap-2 justify-center  sm:mt-0"
-                >
-                  <AiOutlinePlus className="text-[1rem]" />{" "}
-                  <span className="text-sm">Add New Vendor</span>
-                </Link>
-                <ExportButton
-                  data={vendors} // Pass the data to export
-                  filename="VendorList" // Optional filename for the exported file
-                  icon={FaDownload} // Icon for the button
-                  label="Export " // Button label
-                  className="bg-primary text-white hover:bg-primary-dark" // Tailwind classes for styling
-                  style={{ color: "white" }} // Optional inline styles
-                />
-              </div>
-            </div>
-            <Suspense fallback={<div>Loading Table...</div>}>
+
               <VendorTable
                 vendors={memoizedVendors}
                 onDeleteVendor={handleDeleteVendor}
@@ -284,11 +251,7 @@ const VendorList = () => {
                 setImageLoading={setImageLoading}
                 imageLoading={imageLoading}
               />
-            </Suspense>
-          </div>
-        </div>
-      </div>
-    </div>
+
   );
 };
 

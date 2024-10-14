@@ -8,7 +8,6 @@ import {
 import AttributeSetup from "./pages/ProductAttributeSetUp/ProductAttributeSetUp";
 import WelcomePage from "./pages/WelcomePage/WelcomePage";
 import Categories from "./pages/Categoreis/Categories";
-import SubCateggories from "./pages/Categoreis/SubCateggories";
 import Sub_Sub_Categories from "./pages/Categoreis/Sub_Sub_Categories";
 import AddNewBrand from "./pages/Brands/AddNew";
 import BulkImport from "./pages/In_House_Product/AddProduct/BulkImport/BulkImport";
@@ -70,7 +69,6 @@ import VenderWalletMethod from "./pages/Vender/VenderWalletMethod/VenderWalletMe
 import WithdrawalMethods from "./pages/Vender/VenderWalletMethod/VenderWidrawmethod";
 import RefundDetails from "./pages/Refound/Details/RefoundDetail/RefoundDetail";
 import CategoryUpdate from "./pages/Categoreis/CategoryEdit/CategoryEdit";
-import SubEdit from "./pages/Categoreis/Subcategoryedit";
 import BrandUpdate from "./pages/Brands/BrandUpdate";
 import UpdateAttribute from "./pages/ProductAttributeSetUp/UpdateAtribute";
 // import GenerateBarcode from "./pages/In_House_Product/InHouseProductList/GeneratCode/GeneratCode";
@@ -155,9 +153,7 @@ function AllRoutes() {
         <Route path="/inhouseaddproduct" element={<AddInHouseNewProduct />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/categoryedit/:id" element={<CategoryUpdate />} />
-        {/* <Route path="/subcategories" element={<SubCateggories />} /> */}
         <Route path="/subcategories" element={<SubCategoriess />} />
-        <Route path="/subedit" element={<SubEdit />} />
         <Route path="/subsubcategories" element={<Sub_Sub_Categories />} />
         <Route path="/addnewbrand" element={<AddNewBrand />} />
         <Route path="/brandlist" element={<BrandList />} />
