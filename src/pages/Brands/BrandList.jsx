@@ -1,16 +1,24 @@
-import React, { useEffect, useCallback, lazy } from "react";
+import React, { useEffect, lazy } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchBrands, updateBrandStatus, deleteBrand } from "../../components/redux/brandSlice";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import {
+  fetchBrands,
+  updateBrandStatus,
+  deleteBrand,
+} from "../../components/redux/brandSlice";
+import { FaEdit, FaPen, FaTrash } from "react-icons/fa";
 // import TableList from "../../components/FormInput/TableList";
 import ActionButton from "../../components/ActionButton/Action";
-import Switcher from "../../components/FormInput/Switcher"; 
-import ConfirmationModal from "../../components/FormInput/ConfirmationModal"; 
+import Switcher from "../../components/FormInput/Switcher";
+import ConfirmationModal from "../../components/FormInput/ConfirmationModal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// Lazy load TableList for performance
-const LazyTableList = lazy(() => import("../../components/FormInput/TableList"));
+import LoadingSpinner from "../../components/LoodingSpinner/LoadingSpinner";
+import { IoPencilSharp } from "react-icons/io5";
+import TableList from "../../components/FormInput/TableList";
 
+// const LazyTableList = lazy(() =>
+//   import("../../components/FormInput/TableList")
+// );
 
 const BrandList = () => {
   const dispatch = useDispatch();
@@ -77,11 +85,7 @@ const BrandList = () => {
       label: "Action",
       render: (brand) => (
         <div className="flex justify-center gap-2">
-          <ActionButton
-            to={`/update/${brand._id}`}
-            icon={FaEdit}
-            label="Edit"
-          />
+          <ActionButton to={`/update/${brand._id}`} icon={FaPen} label="Edit" />
           <ActionButton
             onClick={() => handleDeleteBrand(brand._id)}
             icon={FaTrash}
@@ -93,19 +97,38 @@ const BrandList = () => {
   ];
 
   return (
-       <div>
-      <React.Suspense fallback={<div>Loading...</div>}>
-        <LazyTableList
+    <div className="">
+      {/* <React.Suspense */}
+      fallback=
+      {/* {
+        <div>
+          <LoadingSpinner />
+        </div>
+      } */}
+      {/* > */}
+      {/* <LazyTableList
           title="Brand List"
           tableTitle="Brand List"
           listData={brands}
-          imageSrc ="/top-selling-product-icon.png"
+          imageSrc="/top-selling-product-icon.png"
+          fetchListData={() => dispatch(fetchBrands())}
+          columns={columns}
+          exportFileName="brandList"
+          searchPlaceholder="Search by Brand Name"
+        /> */}
+      <div className="">
+        <TableList
+          title="Brand List"
+          listData={brands}
           fetchListData={() => dispatch(fetchBrands())}
           columns={columns}
           exportFileName="brandList"
           searchPlaceholder="Search by Brand Name"
         />
-      </React.Suspense>
+
+        <ToastContainer />
+      </div>
+      {/* </React.Suspense> */}
       <ToastContainer />
     </div>
   );

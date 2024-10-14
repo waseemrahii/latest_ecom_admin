@@ -1,4 +1,3 @@
-
 // import React, { useEffect, useState } from 'react';
 // import { useDispatch, useSelector } from 'react-redux';
 // import {
@@ -131,20 +130,28 @@
 //         </div>
 //       </div>
 //     </FormSection>
-    
+
 //   );
 // };
 
 // export default ProductAttributes;
 
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchColors, fetchAttributes } from '../../../../components/redux/categorybrandSlice';
-import FormSelect from '../../../../components/FormInput/FormSelect';
-import FormSection from '../../../../components/FormInput/FormSection';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchColors,
+  fetchAttributes,
+} from "../../../../components/redux/categorybrandSlice";
+import FormSelect from "../../../../components/FormInput/FormSelect";
+import FormSection from "../../../../components/FormInput/FormSection";
+import { IoMdPerson } from "react-icons/io";
 
-
-const ProductAttributes = ({ selectedColors, setSelectedColors, productAttributes, setProductAttributes }) => {
+const ProductAttributes = ({
+  selectedColors,
+  setSelectedColors,
+  productAttributes,
+  setProductAttributes,
+}) => {
   const dispatch = useDispatch();
   const [selectedAttribute, setSelectedAttribute] = useState("");
 
@@ -158,24 +165,32 @@ const ProductAttributes = ({ selectedColors, setSelectedColors, productAttribute
   const { colors, attributes } = useSelector((state) => state.category);
 
   const handleAttributeChange = (e) => {
-    const selectedAttr = attributes.find(attr => attr._id === e.target.value);
+    const selectedAttr = attributes.find((attr) => attr._id === e.target.value);
     setSelectedAttribute(selectedAttr); // Store the whole attribute object
   };
-  
+
   const addAttribute = () => {
-    if (selectedAttribute && !productAttributes.some(attr => attr._id === selectedAttribute._id)) {
+    if (
+      selectedAttribute &&
+      !productAttributes.some((attr) => attr._id === selectedAttribute._id)
+    ) {
       setProductAttributes([...productAttributes, selectedAttribute]);
       setSelectedAttribute(""); // Clear selection after adding
     }
   };
 
   const removeAttribute = (attr) => {
-    setProductAttributes(productAttributes.filter((item) => item._id !== attr._id));
+    setProductAttributes(
+      productAttributes.filter((item) => item._id !== attr._id)
+    );
   };
 
   const handleColorChange = (e) => {
-    const selectedColor = colors.find(color => color._id === e.target.value);
-    if (selectedColor && !selectedColors.some(color => color._id === selectedColor._id)) {
+    const selectedColor = colors.find((color) => color._id === e.target.value);
+    if (
+      selectedColor &&
+      !selectedColors.some((color) => color._id === selectedColor._id)
+    ) {
       setSelectedColors([...selectedColors, selectedColor]);
     }
   };
@@ -185,36 +200,35 @@ const ProductAttributes = ({ selectedColors, setSelectedColors, productAttribute
   };
 
   return (
-    <FormSection title="Product Attributes">
-      <div className="grid grid-cols-1 lg:grid-cols-6">
-        {/* Select Attribute */}
-        <div className="flex flex-col col-span-12 mb-4">
-          <div className="col-span-8 flex items-center">
+    <FormSection title="Produt Variation Setup" icon={<IoMdPerson />}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Select Color */}
+        <div className="flex flex-col  mb-4">
+          <div className="flex items-center">
             <FormSelect
-              label="Select Attribute"
-              name="attribute"
-              value={selectedAttribute ? selectedAttribute._id : ""}
-              onChange={handleAttributeChange}
-              options={attributes.map(attr => ({ value: attr._id, label: attr.name }))}
+              label="Select Color"
+              name="color"
+              value={""}
+              onChange={handleColorChange}
+              options={colors.map((color) => ({
+                value: color._id,
+                label: color.name,
+              }))}
               className="w-full h-12"
             />
-            <button
-              type="button"
-              onClick={addAttribute}
-              className="mt-2 bg-green-500 text-white px-4 py-2 rounded ml-2"
-            >
-              Add Attribute
-            </button>
           </div>
 
-          {/* Selected Attributes */}
+          {/* Selected Colors */}
           <div className="flex flex-wrap mb-4">
-            {productAttributes.map((attr, index) => (
-              <div key={index} className="bg-gray-200 px-3 py-1 rounded flex items-center mr-2 mb-2">
-                {attr.name}
+            {selectedColors.map((color, index) => (
+              <div
+                key={index}
+                className="bg-gray-200 px-3 py-1 rounded flex items-center mr-2 mb-2"
+              >
+                {color.name}
                 <button
                   type="button"
-                  onClick={() => removeAttribute(attr)}
+                  onClick={() => removeColor(color)}
                   className="ml-2 text-red-500"
                 >
                   X
@@ -224,27 +238,41 @@ const ProductAttributes = ({ selectedColors, setSelectedColors, productAttribute
           </div>
         </div>
 
-        {/* Select Color */}
-        <div className="flex flex-col col-span-12 mb-4">
-          <div className="col-span-8 flex items-center">
+        {/* Select Attribute */}
+        <div className="flex flex-col  mb-4">
+          <div className=" flex items-center">
             <FormSelect
-              label="Select Color"
-              name="color"
-              value={""}
-              onChange={handleColorChange}
-              options={colors.map(color => ({ value: color._id, label: color.name }))}
+              label="Select Attribute"
+              name="attribute"
+              value={selectedAttribute ? selectedAttribute._id : ""}
+              onChange={handleAttributeChange}
+              options={attributes.map((attr) => ({
+                value: attr._id,
+                label: attr.name,
+              }))}
               className="w-full h-12"
             />
+            <button
+              type="button"
+              onClick={addAttribute}
+              className="mt-2 bg-primary text-white px-4 py-2 rounded ml-2"
+              style={{ color: "white" }}
+            >
+              Add Attribute
+            </button>
           </div>
 
-          {/* Selected Colors */}
+          {/* Selected Attributes */}
           <div className="flex flex-wrap mb-4">
-            {selectedColors.map((color, index) => (
-              <div key={index} className="bg-gray-200 px-3 py-1 rounded flex items-center mr-2 mb-2">
-                {color.name}
+            {productAttributes.map((attr, index) => (
+              <div
+                key={index}
+                className="bg-gray-200 px-3 py-1 rounded flex items-center mr-2 mb-2"
+              >
+                {attr.name}
                 <button
                   type="button"
-                  onClick={() => removeColor(color)}
+                  onClick={() => removeAttribute(attr)}
                   className="ml-2 text-red-500"
                 >
                   X

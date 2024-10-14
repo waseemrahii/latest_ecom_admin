@@ -1,115 +1,121 @@
-import React, { useState } from 'react';
-import { FiStar, FiGlobe } from 'react-icons/fi';
-import './VenderList.css';
-import ShopStoreDetails from './ShopStoreDetails';
-import { Link } from 'react-router-dom';
-import VenderOrder from '../VenderOrder/VenderOrder';
-import VenderProduct from '../VenderList/VenderProduct/VenderProduct';
-import VendorSettings from '../VenderSetting/VenderSetting';
+import React, { useEffect, lazy } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import TransactionTable from '../VenderTransaction/VenderTransaction';
-import VenderReview from '../VenderReview/VenderReview';
+import { FaPen, FaTrash } from "react-icons/fa";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {
+  deleteVendor,
+  fetchVendors,
+  updateVendorStatus,
+} from "../../../components/redux/vendorSlice";
+import ConfirmationModal from "../../../components/FormInput/ConfirmationModal";
+import Switcher from "../../../components/FormInput/Switcher";
+import ActionButton from "../../../components/ActionButton/Action";
+import LoadingSpinner from "../../../components/LoodingSpinner/LoadingSpinner";
+
+const LazyTableList = lazy(() =>
+  import("../../../components/FormInput/TableList")
+);
 
 const VenderListDetail = () => {
-    const [activeTab, setActiveTab] = useState('shopview');
+  const dispatch = useDispatch();
+  const { vendors } = useSelector((state) => state.vendor);
 
-    const handleTabClick = (tab) => {
-        setActiveTab(tab);
-    };
+  useEffect(() => {
+    dispatch(fetchVendors()); // Fetch vendors on load
+  }, [dispatch]);
 
-    const renderTabContent = () => {
-        switch (activeTab) {
-            case 'shopview':
-                return <ShopStoreDetails />;
-            case 'order':
-                return <VenderOrder />;
-            case 'product':
-                return <VenderProduct />;
-            case 'setting':
-                return <VendorSettings />;
-            case 'transaction':
-                return <TransactionTable />;
-            // case 'transaction':
-            //     return <ProductEdit />;
-            case 'review':
-                return <VenderReview />;
-            default:
-                return <ShopStoreDetails />;
-        }
-    };
+  const handleUpdateStatus = (id, currentStatus) => {
+    const newStatus = currentStatus === "active" ? "inactive" : "active";
+    ConfirmationModal({
+      title: "Are you sure?",
+      text: `Do you want to change the status to ${newStatus}?`,
+    }).then((willUpdate) => {
+      if (willUpdate) {
+        dispatch(updateVendorStatus({ vendorId: id, status: newStatus }))
+          .then(() => toast.success(`Vendor status updated to ${newStatus}!`))
+          .catch(() => toast.error("Failed to update vendor status."));
+      } else {
+        toast.info("Status update canceled.");
+      }
+    });
+  };
 
-    return (
-        <div className="content container-fluid snipcss-XDKLR">
-            <div className="mb-3">
-                <h2 className="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
-                   
-                    <img src="https://6valley.6amtech.com/public/assets/back-end/img/add-new-seller.png" alt="" /> Vendor details
-                 
-                </h2>
-            </div>
-            <div className="page-header border-0 mb-4">
-                <div className="js-nav-scroller hs-nav-scroller-horizontal">
-                    <ul className="nav nav-tabs flex-wrap page-header-tabs">
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link ${activeTab === 'shopview' ? 'active' : ''}`}
-                                onClick={() => handleTabClick('shopview')}
-                            >
-                                Shop overview
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link ${activeTab === 'order' ? 'active' : ''}`}
-                                onClick={() => handleTabClick('order')}
-                            >
-                                Order
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link ${activeTab === 'product' ? 'active' : ''}`}
-                                onClick={() => handleTabClick('product')}
-                            >
-                                Product
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link ${activeTab === 'setting' ? 'active' : ''}`}
-                                onClick={() => handleTabClick('setting')}
-                            >
-                                Setting
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link ${activeTab === 'transaction' ? 'active' : ''}`}
-                                onClick={() => handleTabClick('transaction')}
-                            >
-                                Transaction
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link ${activeTab === 'review' ? 'active' : ''}`}
-                                onClick={() => handleTabClick('review')}
-                            >
-                                Review
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div className="card card-top-bg-element mb-5">
-                <div className="card-body">
-                    {renderTabContent()}
-                </div>
-            </div>
+  const handleDeleteVendor = (id) => {
+    ConfirmationModal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this vendor!",
+    }).then((willDelete) => {
+      if (willDelete) {
+        dispatch(deleteVendor(id))
+          .then(() => toast.success("Vendor deleted successfully!"))
+          .catch(() => toast.error("Failed to delete the vendor."));
+      } else {
+        toast.info("Vendor deletion canceled.");
+      }
+    });
+  };
+
+  const columns = [
+    { key: "name", label: "Vendor Name" },
+    {
+      key: "logo",
+      label: "Vendor Logo",
+      render: (vendor) => (
+        <img src={vendor.logo} alt={vendor.name} className="h-16 w-16" />
+      ),
+    },
+    { key: "totalProducts", label: "Total Products" },
+    { key: "totalOrders", label: "Total Orders" },
+    {
+      key: "status",
+      label: "Status",
+      render: (vendor) => (
+        <Switcher
+          checked={vendor?.status === "active"}
+          onChange={() => handleUpdateStatus(vendor._id, vendor.status)}
+        />
+      ),
+    },
+    {
+      key: "action",
+      label: "Action",
+      render: (vendor) => (
+        <div className="flex justify-center gap-2">
+          <ActionButton
+            to={`/update/${vendor._id}`}
+            icon={FaPen}
+            label="Edit"
+          />
+          <ActionButton
+            onClick={() => handleDeleteVendor(vendor._id)}
+            icon={FaTrash}
+            label="Delete"
+          />
         </div>
-    );
+      ),
+    },
+  ];
+
+  return (
+    <div>
+      <React.Suspense fallback={<LoadingSpinner />}>
+        <LazyTableList
+          title="Vendor List"
+          tableTitle="Vendor List"
+          listData={vendors}
+          imageSrc="/top-selling-product-icon.png"
+          fetchListData={() => dispatch(fetchVendors())}
+          columns={columns}
+          exportFileName="vendorList"
+          searchPlaceholder="Search by Vendor Name"
+        />
+      </React.Suspense>
+      <ToastContainer />
+    </div>
+  );
 };
 
-export default VenderListDetail;
-
+export default React.memo(VenderListDetail);

@@ -44,7 +44,7 @@ function App() {
                 <div
                   className={`fixed inset-0 z-30 ${
                     isSidebarOpen ? "block" : "hidden"
-                  } lg:block lg:relative lg:w-2/12`}
+                  } lg:block lg:relative lg:w-2/12 lg:ml-10`}
                 >
                   <div
                     className="fixed inset-0 bg-gray-600 bg-opacity-75 lg:hidden"
