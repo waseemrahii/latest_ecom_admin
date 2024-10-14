@@ -5,9 +5,12 @@ import ApiUrl from '../../ApiUrl';
 // API Endpoints
 const SUBCATEGORY_API_URL = `${ApiUrl}sub-categories`;
 
-// Helper function to get the token from local storage
 const getToken = () => {
-  return localStorage.getItem('token');
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('No token found');
+  }
+  return token;
 };
 
 // Fetch subcategories
@@ -58,7 +61,7 @@ export const createSubCategory = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data;
+      return response.data.doc;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -94,7 +97,7 @@ export const updateSubCategoryStatus = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data;
+      return response.data.doc;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }

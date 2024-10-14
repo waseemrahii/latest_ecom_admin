@@ -1,16 +1,17 @@
-// ConfirmationModal.jsx
 import swal from "sweetalert";
 
-const ConfirmationModal = (options) => {
+const ConfirmationModal = async (options) => {
   const { title, text, icon = "warning", dangerMode = true } = options;
 
-  return swal({
+  const result = await swal({
     title: title,
     text: text,
     icon: icon,
     buttons: true,
     dangerMode: dangerMode,
   });
+
+  return result; // Return user's response (true/false)
 };
 
 export default ConfirmationModal;

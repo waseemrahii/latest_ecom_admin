@@ -1,9 +1,11 @@
+
+
+
 import React, { useEffect, useState, lazy, memo } from "react";
 import { FiSearch } from "react-icons/fi";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TableHeader from "./TableHeader";
-import LoadingSpinner from "../LoodingSpinner/LoadingSpinner";
 
 const ExportButton = lazy(() => import("../ActionButton/Export"));
 
@@ -12,7 +14,6 @@ const TableList = memo(
     title,
     tableTitle,
     listData = [],
-    fetchListData,
     columns = [],
     exportFileName = "listData",
     searchPlaceholder = "Search...",
@@ -25,14 +26,6 @@ const TableList = memo(
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1); // State for current page
     const [itemsPerPageState, setItemsPerPageState] = useState(itemsPerPage); // State for items per page
-    const [sortConfig, setSortConfig] = useState({
-      key: "",
-      direction: "ascending",
-    }); // State for sorting
-
-    useEffect(() => {
-      fetchListData();
-    }, [fetchListData]);
 
     useEffect(() => {
       const filtered = searchQuery
@@ -55,6 +48,22 @@ const TableList = memo(
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const totalPages = Math.ceil(filteredData.length / itemsPerPageState);
+
+    // Function to get the displayed pagination numbers
+    const getPaginationNumbers = () => {
+      if (totalPages <= 2) {
+        return Array.from({ length: totalPages }, (_, index) => index + 1);
+      }
+      if (currentPage === 1) {
+        return [1, 2];
+      }
+      if (currentPage === totalPages) {
+        return [totalPages - 1, totalPages];
+      }
+      return [currentPage - 1, currentPage, currentPage + 1];
+    };
+
+    const paginationNumbers = getPaginationNumbers();
 
     return (
       <div className="mt-3 bg-[#F9F9FB] pr-2 md:p-5 w-full">
@@ -83,6 +92,7 @@ const TableList = memo(
                   />
                   <button
                     type="submit"
+                    title="Search" // Added title
                     className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-r-md"
                     style={{ color: "white" }}
                   >
@@ -97,7 +107,9 @@ const TableList = memo(
               <ExportButton
                 data={filteredData}
                 filename={exportFileName}
+                title="Export" // Added title
                 className="bg-primary text-white hover:bg-primary-dark px-4 py-2 rounded-md"
+                style={{ color: "white" }}
                 label="Export"
               />
             </div>
@@ -111,9 +123,8 @@ const TableList = memo(
                     <th
                       key={col.key}
                       className="px-4 py-3 text-center text-[#57596C] cursor-pointer"
-                      onClick={() => requestSort(col.key)}
                     >
-                      <div className="flex justify-between">
+                      <div className="flex justify-center">
                         <span>{col.label}</span>
                       </div>
                     </th>
@@ -121,11 +132,16 @@ const TableList = memo(
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map((item) => (
+                {currentItems.map((item, index) => (
                   <tr key={item[itemKey]} className="hover:bg-gray-50">
                     {columns.map((col) => (
-                      <td key={col.key} className="px-4 py-2 text-center">
-                        {col.render ? col.render(item) : item[col.key]}
+                      <td
+                        key={col.key}
+                        className="px-4 py-3 text-center text-[#57596C]"
+                      >
+                        {col.render
+                          ? col.render(item, index, currentPage, itemsPerPageState)
+                          : item[col.key]}
                       </td>
                     ))}
                   </tr>
@@ -134,48 +150,43 @@ const TableList = memo(
             </table>
           </div>
 
-          <div className="flex justify-between md:flex-row flex-col gap-2 mt-4 items-center px-6 py-3">
-            <div className="text-gray-500">
-              Showing {indexOfFirstItem + 1} to{" "}
-              {Math.min(indexOfLastItem, filteredData.length)} of{" "}
-              {filteredData.length} entries
-            </div>
-            <div className="flex items-center space-x-2">
-              {currentPage > 1 && (
-                <button
-                  onClick={() => paginate(currentPage - 1)}
-                  className="bg-gray-900 text-white border border-gray-300 px-3 py-1 rounded-full hover:bg-primary-dark transition duration-150"
-                  style={{ color: "white" }}
-                >
-                  &lt;
-                </button>
-              )}
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (number) => (
-                  <button
-                    key={number}
-                    onClick={() => paginate(number)}
-                    className={`${
-                      currentPage === number
-                        ? "bg-primary text-white"
-                        : "bg-gray-500 text-gray-500 border border-gray-300"
-                    } px-2 py-1 rounded-full hover:bg-primary-dark hover:text-white transition duration-150`}
-                    style={{ color: "white" }}
-                  >
-                    {number}
-                  </button>
-                )
-              )}
-              {currentPage < totalPages && (
-                <button
-                  onClick={() => paginate(currentPage + 1)}
-                  className=" bg-gray-900 text-white border border-gray-300 px-3 py-1 rounded-full hover:bg-primary-dark transition duration-150"
-                  style={{ color: "white" }}
-                >
-                  &gt;
-                </button>
-              )}
-            </div>
+          {/* Pagination */}
+          <div className="flex justify-center md:justify-end mt-4 mx-4 sm:mx-6 md:mx-8 lg:mx-10 p-2 sm:p-3 md:p-4">
+          <button 
+              onClick={() => paginate(currentPage - 1)} 
+              disabled={currentPage === 1} 
+              className={`px-4 py-2 rounded-lg bg-gray-200 text-black ${currentPage === 1 ? "cursor-not-allowed" : ""}`}
+              title="Previous Page" // Added title
+            >
+              &lt; {/* Previous Button */}
+            </button>
+            <nav>
+              <ul className="flex list-none">
+                {paginationNumbers.map((pageNumber) => (
+                  <li key={pageNumber} className="mx-1">
+                    <button
+                      onClick={() => paginate(pageNumber)}
+                      className={`px-4 py-2 rounded-lg ${
+                        currentPage === pageNumber
+                          ? "bg-primary text-white"
+                          : "bg-gray-200 text-black"
+                      }`}
+                      title={`Page ${pageNumber}`} // Added title
+                    >
+                      {pageNumber}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <button 
+              onClick={() => paginate(currentPage + 1)} 
+              disabled={currentPage === totalPages} 
+              className={`px-4 py-2 rounded-lg bg-gray-200 text-black ${currentPage === totalPages ? "cursor-not-allowed" : ""}`}
+              title="Next Page" // Added title
+            >
+              &gt; {/* Next Button */}
+            </button>
           </div>
         </div>
       </div>

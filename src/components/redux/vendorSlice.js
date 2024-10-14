@@ -94,7 +94,6 @@ export const updateVendorStatus = createAsyncThunk(
   async ({ vendorId, status }, { rejectWithValue }) => {
     const token = getToken(); // Get the token from localStorage
     try {
-      console.log("vendor id  and status ", vendorId, status)
       const response = await axios.put(
         `${API_URL}${vendorId}/status`,
         { status },

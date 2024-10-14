@@ -79,12 +79,7 @@ const SubCategoryForm = ({
       </div>
 
       <div className="d-flex flex-wrap gap-2 justify-content-end">
-        <button
-          type="reset"
-          className="btn bg-secondary border border-secondary"
-        >
-          Reset
-        </button>
+     
         <button
           type="submit"
           className="btn bg-primary text-white hover:bg-primary-dark hover:text-white"
