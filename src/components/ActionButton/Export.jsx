@@ -1,4 +1,5 @@
 import React from "react";
+import { FaDownload } from "react-icons/fa";
 import * as XLSX from "xlsx"; // Import XLSX for exporting data
 
 const ExportButton = ({
@@ -30,6 +31,7 @@ const ExportButton = ({
       // style={style}
       style={{ color: "white" }}
     >
+      {/* <FaDownload /> */}
       {Icon && <Icon className="text-white" />} {/* Render icon dynamically */}
       {label}
     </button>

@@ -8,7 +8,7 @@ const VendorTable = memo(
   ({
     onDeleteVendor,
     vendors,
-    
+
     onUpdateStatus,
     setImageLoading,
     imageLoading,

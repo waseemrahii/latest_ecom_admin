@@ -5,7 +5,7 @@ import {
   updateBrandStatus,
   deleteBrand,
 } from "../../components/redux/brandSlice";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaPen, FaTrash } from "react-icons/fa";
 // import TableList from "../../components/FormInput/TableList";
 import ActionButton from "../../components/ActionButton/Action";
 import Switcher from "../../components/FormInput/Switcher";
@@ -13,10 +13,12 @@ import ConfirmationModal from "../../components/FormInput/ConfirmationModal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingSpinner from "../../components/LoodingSpinner/LoadingSpinner";
+import { IoPencilSharp } from "react-icons/io5";
+import TableList from "../../components/FormInput/TableList";
 
-const LazyTableList = lazy(() =>
-  import("../../components/FormInput/TableList")
-);
+// const LazyTableList = lazy(() =>
+//   import("../../components/FormInput/TableList")
+// );
 
 const BrandList = () => {
   const dispatch = useDispatch();
@@ -83,11 +85,7 @@ const BrandList = () => {
       label: "Action",
       render: (brand) => (
         <div className="flex justify-center gap-2">
-          <ActionButton
-            to={`/update/${brand._id}`}
-            icon={FaEdit}
-            label="Edit"
-          />
+          <ActionButton to={`/update/${brand._id}`} icon={FaPen} label="Edit" />
           <ActionButton
             onClick={() => handleDeleteBrand(brand._id)}
             icon={FaTrash}
@@ -100,14 +98,15 @@ const BrandList = () => {
 
   return (
     <div className="">
-      <React.Suspense
-        fallback={
-          <div>
-            <LoadingSpinner />
-          </div>
-        }
-      >
-        <LazyTableList
+      {/* <React.Suspense */}
+      fallback=
+      {/* {
+        <div>
+          <LoadingSpinner />
+        </div>
+      } */}
+      {/* > */}
+      {/* <LazyTableList
           title="Brand List"
           tableTitle="Brand List"
           listData={brands}
@@ -116,23 +115,22 @@ const BrandList = () => {
           columns={columns}
           exportFileName="brandList"
           searchPlaceholder="Search by Brand Name"
+        /> */}
+      <div className="">
+        <TableList
+          title="Brand List"
+          listData={brands}
+          fetchListData={() => dispatch(fetchBrands())}
+          columns={columns}
+          exportFileName="brandList"
+          searchPlaceholder="Search by Brand Name"
         />
-      </React.Suspense>
+
+        <ToastContainer />
+      </div>
+      {/* </React.Suspense> */}
       <ToastContainer />
     </div>
-    // <div className="">
-
-    //     <TableList
-    //       title="Brand List"
-    //       listData={brands}
-    //       fetchListData={() => dispatch(fetchBrands())}
-    //       columns={columns}
-    //       exportFileName="brandList"
-    //       searchPlaceholder="Search by Brand Name"
-    //     />
-
-    //   <ToastContainer />
-    // </div>
   );
 };
 

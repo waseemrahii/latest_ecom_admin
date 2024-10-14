@@ -18,29 +18,8 @@ const TableList = memo(
     searchPlaceholder = "Search...",
     itemKey = "_id", // default key for mapping
     itemsPerPage = 4, // default items per page
-    imageSrc = "", // Add imageSrc prop for dynamic image
-  }) => {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [filteredData, setFilteredData] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1); // State for current page
-    const [itemsPerPageState, setItemsPerPageState] = useState(itemsPerPage); // State for items per page
-    const [sortConfig, setSortConfig] = useState({
-      key: "",
-      direction: "ascending",
-    }); // State for sorting
-const TableList = memo(
-  ({
-    title,
-    tableTitle,
-    listData = [],
-    fetchListData,
-    columns = [],
-    exportFileName = "listData",
-    searchPlaceholder = "Search...",
-    itemKey = "_id", // default key for mapping
-    itemsPerPage = 4, // default items per page
-    imageSrc = "", 
-    headerActions, 
+    imageSrc = "",
+    headerActions,
   }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredData, setFilteredData] = useState([]);
@@ -58,35 +37,11 @@ const TableList = memo(
     useEffect(() => {
       const filtered = searchQuery
         ? listData.filter((item) =>
-            item.name.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-        : listData;
-      setFilteredData(filtered);
-    }, [listData, searchQuery]);
-    useEffect(() => {
-      const filtered = searchQuery
-        ? listData.filter((item) =>
             item.name?.toLowerCase().includes(searchQuery.toLowerCase())
           )
         : listData;
       setFilteredData(filtered);
     }, [listData, searchQuery]);
-
-    useEffect(() => {
-      let sortedData = [...filteredData];
-      if (sortConfig.key) {
-        sortedData.sort((a, b) => {
-          if (a[sortConfig.key] < b[sortConfig.key]) {
-            return sortConfig.direction === "ascending" ? -1 : 1;
-          }
-          if (a[sortConfig.key] > b[sortConfig.key]) {
-            return sortConfig.direction === "ascending" ? 1 : -1;
-          }
-          return 0;
-        });
-      }
-      setFilteredData(sortedData);
-    }, [sortConfig, filteredData]);
 
     const handleSearchChange = (e) => {
       setSearchQuery(e.target.value);
@@ -101,79 +56,6 @@ const TableList = memo(
 
     const totalPages = Math.ceil(filteredData.length / itemsPerPageState);
 
-    const requestSort = (key) => {
-      let direction = "ascending";
-      if (sortConfig.key === key && sortConfig.direction === "ascending") {
-        direction = "descending";
-      }
-      setSortConfig({ key, direction });
-    };
-
-    const SortIndicator = ({ direction }) =>
-      direction === "ascending" ? <span>▲</span> : <span>▼</span>;
-
-    return (
-      <div className="mt-3 bg-[#F9F9FB] pr-2 md:p-5 w-full">
-        <ToastContainer />
-        <TableHeader imageSrc={imageSrc} title={title} />{" "}
-        {/* Use TableHeader here */}
-        <div className="card bg-white shadow-lg rounded-lg">
-          <div className="flex items-start justify-between flex-col md:flex-row gap-4 px-5 py-4">
-            <div className="flex gap-3 justify-center items-center">
-              <h4 className="font-semibold text-lg">{tableTitle}</h4>
-              <span className="badge badge-soft-dark ml-2 flex justify-center items-center">
-                {filteredData.length}
-              </span>
-            </div>
-            <div className="flex flex-col md:flex-row items-end gap-4">
-              <form onSubmit={(e) => e.preventDefault()} className="flex-grow">
-                <div className="flex border rounded-lg overflow-hidden">
-                  <div className="flex items-center justify-center px-3 ">
-                    <FiSearch />
-                  </div>
-                  <input
-                    type="search"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    className="form-control border-none outline-none px-4 py-2 w-full md:w-48"
-                    placeholder={searchPlaceholder}
-                  />
-                  <button
-                    type="submit"
-                    className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-r-md"
-                    style={{ color: "white" }}
-                  >
-                    Search
-                  </button>
-                </div>
-              </form>
-              <React.Suspense
-                fallback={
-                  <div>
-                    <LoadingSpinner />
-                  </div>
-                }
-              >
-                <ExportButton
-                  data={filteredData}
-                  filename={exportFileName}
-                  className="bg-primary text-white hover:bg-primary-dark px-4 py-2 rounded-md"
-                  label="Export"
-                />
-              </React.Suspense>
-            </div>
-          </div>
-    const requestSort = (key) => {
-      let direction = "ascending";
-      if (sortConfig.key === key && sortConfig.direction === "ascending") {
-        direction = "descending";
-      }
-      setSortConfig({ key, direction });
-    };
-
-    const SortIndicator = ({ direction }) =>
-      direction === "ascending" ? <span>▲</span> : <span>▼</span>;
-
     return (
       <div className="mt-3 bg-[#F9F9FB] pr-2 md:p-5 w-full">
         <ToastContainer />
@@ -187,7 +69,6 @@ const TableList = memo(
               </span>
             </div>
             <div className="flex flex-col md:flex-row items-end gap-4">
-        
               <form onSubmit={(e) => e.preventDefault()} className="flex-grow">
                 <div className="flex border rounded-lg overflow-hidden">
                   <div className="flex items-center justify-center px-3 ">
@@ -210,15 +91,15 @@ const TableList = memo(
                 </div>
               </form>
 
-                    {/* Custom header actions on the right side */}
+              {/* Custom header actions on the right side */}
               {headerActions}
 
-                <ExportButton
-                  data={filteredData}
-                  filename={exportFileName}
-                  className="bg-primary text-white hover:bg-primary-dark px-4 py-2 rounded-md"
-                  label="Export"
-                />
+              <ExportButton
+                data={filteredData}
+                filename={exportFileName}
+                className="bg-primary text-white hover:bg-primary-dark px-4 py-2 rounded-md"
+                label="Export"
+              />
             </div>
           </div>
 
@@ -234,9 +115,6 @@ const TableList = memo(
                     >
                       <div className="flex justify-between">
                         <span>{col.label}</span>
-                        {sortConfig.key === col.key && (
-                          <SortIndicator direction={sortConfig.direction} />
-                        )}
                       </div>
                     </th>
                   ))}
@@ -266,7 +144,7 @@ const TableList = memo(
               {currentPage > 1 && (
                 <button
                   onClick={() => paginate(currentPage - 1)}
-                  className="bg-white text-gray-500 border border-gray-300 px-3 py-1 rounded-full hover:bg-primary-dark transition duration-150"
+                  className="bg-gray-900 text-white border border-gray-300 px-3 py-1 rounded-full hover:bg-primary-dark transition duration-150"
                   style={{ color: "white" }}
                 >
                   &lt;
@@ -280,8 +158,8 @@ const TableList = memo(
                     className={`${
                       currentPage === number
                         ? "bg-primary text-white"
-                        : "bg-white text-gray-500 border border-gray-300"
-                    } px-3 py-1 rounded-full hover:bg-primary-dark hover:text-white transition duration-150`}
+                        : "bg-gray-500 text-gray-500 border border-gray-300"
+                    } px-2 py-1 rounded-full hover:bg-primary-dark hover:text-white transition duration-150`}
                     style={{ color: "white" }}
                   >
                     {number}
@@ -291,7 +169,7 @@ const TableList = memo(
               {currentPage < totalPages && (
                 <button
                   onClick={() => paginate(currentPage + 1)}
-                  className="bg-white text-gray-500 border border-gray-300 px-3 py-1 rounded-full hover:bg-primary-dark transition duration-150"
+                  className=" bg-gray-900 text-white border border-gray-300 px-3 py-1 rounded-full hover:bg-primary-dark transition duration-150"
                   style={{ color: "white" }}
                 >
                   &gt;
